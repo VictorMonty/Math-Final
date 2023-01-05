@@ -61,7 +61,7 @@ internal class Program
     public static bool millerRabin(Int64 p, int c)
     {
 
-        Console.WriteLine("Miller Rabin Test begun.");
+        Console.WriteLine("Miller-Rabin test started");
 
         Int64 k = p - 1;
         int n = 0;
@@ -72,11 +72,14 @@ internal class Program
             n += 1;
         }
 
-        Random rand = new Random();
+        long[] aArray;
+        if (p < 4759123141) aArray = new long[] { 2, 7, 61 };
+        else if (p < 341550071728321) aArray = new long[] { 2, 3, 5, 7, 11, 13, 17 };
+        else aArray = new long[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
-        for (int i = 0; i < c; i++)
+        for (int i = 0; i < aArray.Length; i++)
         {
-            long a = rand.NextInt64(k) + 1;
+            long a = Math.Min(p - 2, aArray[i]);
             BigInteger x = k;
             BigInteger y = 1;
 
@@ -90,8 +93,12 @@ internal class Program
                 x *= 2;
             }
             if (y != p - 1 && x % 2 == 0)
+            {
+                Console.WriteLine("Miller-Rabin test returned composite");
                 return false;
+            }
         }
+        Console.WriteLine("Miller-Rabin test returned prime");
         return true;
     }
     public static BigInteger fermatCheck(BigInteger p)
